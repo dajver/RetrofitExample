@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RetrofitExample</string>
+    <string name="search_text">Search text here</string>
 </resources>
