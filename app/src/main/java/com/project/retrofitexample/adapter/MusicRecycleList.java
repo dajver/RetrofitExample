@@ -1,6 +1,5 @@
 package com.project.retrofitexample.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,16 +20,17 @@ import butterknife.ButterKnife;
 
 public class MusicRecycleList extends RecyclerView.Adapter<MusicRecycleList.ViewHolder>{
 
+    // наш аррей с списком песен которые нам вернутся с апи
     private List<List<String>> searchModels = new ArrayList<>();
+    //колбек который по клику будет что то делать, сами решайте что делать с ним
     private OnItemClickListener onItemClickListener;
-    private ArrayList<MusicRecycleList.ViewHolder> viewHolders = new ArrayList<>();
-    private Context context;
 
-    public MusicRecycleList(Context context, List<List<String>> searchModels) {
+    // сетим в конструкторе наш список песен
+    public MusicRecycleList(List<List<String>> searchModels) {
         this.searchModels = searchModels;
-        this.context = context;
     }
 
+    // сетим вьюху и втю холдер
     @Override
     public MusicRecycleList.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_music, parent, false);
@@ -38,6 +38,7 @@ public class MusicRecycleList extends RecyclerView.Adapter<MusicRecycleList.View
         return pvh;
     }
 
+    // биндим данные в вьюху, в нашем случае в textview
     @Override
     public void onBindViewHolder(final MusicRecycleList.ViewHolder holder, final int position) {
         holder.title.setText(searchModels.get(position).get(4) + " - " + searchModels.get(position).get(3));
@@ -48,22 +49,35 @@ public class MusicRecycleList extends RecyclerView.Adapter<MusicRecycleList.View
         return searchModels.size();
     }
 
+    // холдер с вьюхой
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.textView)
         TextView title;
 
-        ViewHolder(final View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
+            // указываем баттернайфу что мы получаем айдишники из item_music
             ButterKnife.bind(this, itemView);
+            //отлавливаем клик по айтему
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // отправляем колбек по клику на айтем, отлавливаем его в MainActivity
+                    int position = MusicRecycleList.ViewHolder.super.getAdapterPosition();
+                    onItemClickListener.onItemClick(position);
+                }
+            });
         }
     }
 
+    // сеттер для колбека
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
+    // интерфейс колбек
     public interface OnItemClickListener {
-        void onItemClick(String id);
+        void onItemClick(int id);
     }
 }
